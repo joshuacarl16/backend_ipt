@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
-from .serializers import UserSerializer, TopicSerializer, CategorySerializer, CommentSerializer
+from .serializers import UserSerializer, TopicSerializer, CategorySerializer, CommentSerializer, ReplySerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from .models import Category, Topic, Comment, User
+from .models import Category, Reply, Topic, Comment, User
 
 @csrf_exempt
 @api_view(['POST'])
@@ -163,3 +163,41 @@ def deleteComment(request, pk):
     comment = Comment.objects.get(id=pk)
     comment.delete()
     return Response('Comment deleted!')
+
+@api_view(['GET'])
+def viewReplies(request):
+    replies = Reply.objects.all()
+    serializer = ReplySerializer(replies, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def addReply(request):
+    data = request.data
+    commentId = data['commentId']
+    userId = data['userId']
+    comment = Comment.objects.get(pk=commentId)
+    user = User.objects.get(pk=userId)
+    reply = Reply.objects.create(
+        replyId=data['replyId'],
+        replyContent=data['replyContent'],
+        userId=user,
+        commentId=comment
+    )
+    serializer = ReplySerializer(reply)
+    return Response(serializer.data)
+    
+@api_view(['PUT'])
+def updateReply(request, pk):
+    data = request.data
+    comment = Reply.objects.get(id=pk)
+    serializer = ReplySerializer(comment, data=request.POST)
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteReply(request, pk):
+    reply = Reply.objects.get(id=pk)
+    reply.delete()
+    return Response('Reply deleted!')   

@@ -19,8 +19,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('login/', views.login_view),
+    path('', views.users_list),
     path('users/', views.users_list),
+    path('login/', views.login_view),
     path('users/<str:username>', views.get_username),
     path('register/', views.register_user),
     path('categories/', views.viewCategories),
@@ -32,6 +33,6 @@ urlpatterns = [
     path('topics/<str:pk>/', views.viewTopic),
     path('comments/', views.viewComments),
     path('add_comment/', views.addComment),
-    # path('replies/', views.viewReplies),
-    # path('add_reply', views.addReply),
+    path('replies/', views.viewReplies),
+    path('add_reply', views.addReply),
 ]

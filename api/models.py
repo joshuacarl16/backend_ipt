@@ -41,7 +41,7 @@ class Comment(models.Model):
     topicId = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True)
     content = models.CharField(max_length=100)
     userId = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    showReply = models.BooleanField(default=False)
+    replies = models.CharField(max_length=100, null=True)
 
 
 
